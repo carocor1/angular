@@ -1,0 +1,34 @@
+<!-- src/app/login/login.component.html -->
+
+<!-- el col-lg-6 va a actuar en las pantallas mas grandes, y col-8 para pantallas pequeñas -->
+<!-- <div class="col-lg-6 col-8" style="background-color: blueviolet;"><h1>Lázaro</h1></div>  se pone en 6 porque quiero ponerlo en el medio--> 
+<!--<div class="col-lg-6 col-8" style="background-color: red;"><h1>Porporatto</h1></div> -->
+
+<div class="container mt-5 style=" >
+    <div class="row justify-content-center" style="height: 100%;">
+        <div class="col-lg-5" style="align-self: center; ">
+            <div class="card" style="border: none; border-radius: 10px; background-color: rgba(255, 255, 255, 0.9); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div class="card-body" style="padding: 30px; ">
+                    <h3 class="card-title text-center" style="color: #2C3E50;">Iniciar Sesión</h3>
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                        <div class="mb-3">
+                            <label for="email" class="form-label" style="color: #34495E;">Email</label>
+                            <input type="text" id="email" class="form-control" formControlName="email" style="border: 1px solid #BDC3C7; border-radius: 5px;">
+                            <div *ngIf="submitted && loginForm.get('email')?.errors" class="text-danger" style="color: #E74C3C;">
+                                Email inválido
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label" style="color: #34495E;">Contraseña</label>
+                            <input type="password" id="password" class="form-control" formControlName="password" style="border: 1px solid #BDC3C7; border-radius: 5px;">
+                            <div *ngIf="submitted && loginForm.get('password')?.errors" class="text-danger" style="color: #E74C3C;">
+                                La contraseña debe tener al menos 8 caracteres
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" style="background-color: #2C3E50; border-color: #2980B9;">Ingresar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
