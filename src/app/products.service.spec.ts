@@ -41,4 +41,22 @@ describe('ProductsService', () => {
  // Verifica que no se obtienen productos (el array está vacío)
     expect(productos.length === 0).toBeTrue();
   });
+
+  it('debería obtener un único producto', async () => {
+    const mockProduct: ProductI = { 
+      name: 'Single Product', 
+      price: 150, 
+      productType: { id: 1, name: 'Type 1' } 
+    };
+  
+    axiosGetSpy.and.returnValue(Promise.resolve({ data: [mockProduct] })); // Simulamos una respuesta con un solo producto
+  
+    const productos = await service.obtenerProductos();
+  
+    // Verificamos que se haya obtenido un solo producto
+    expect(productos.length).toBe(1);
+    expect(productos[0].name).toBe('Single Product');
+    expect(productos[0].price).toBe(150);
+  });
+  
 });
