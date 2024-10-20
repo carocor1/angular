@@ -1,49 +1,51 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
-import { ProductComponent } from './products.component';
+import { TestBed } from '@angular/core/testing';
 import { ProductsService } from './products.service';
 import { ProductI } from '../../interfaces/product';
+import axios from 'axios';
 
-describe('ProductsComponent Integration Test', () => {
-  let component: ProductComponent;
-  let fixture: ComponentFixture<ProductComponent>;
+describe('ProductsService (Integration)', () => {
   let service: ProductsService;
+  let accessToken: string = '';
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [HttpClientModule,ProductComponent], // Utiliza HttpClientModule para las solicitudes reales// No olvides declarar tu componente
+  beforeAll(async () => {
+    TestBed.configureTestingModule({
       providers: [ProductsService]
-    }).compileComponents();
+    });
 
-    fixture = TestBed.createComponent(ProductComponent);
-    component = fixture.componentInstance;
     service = TestBed.inject(ProductsService);
-  });
-
-  it('debería cargar los productos al inicializarse', async () => {
-    // Llama a ngOnInit que debe hacer la llamada HTTP real
-    fixture.detectChanges(); // Dispara la inicialización del componente
-
-    // Espera a que se resuelva la llamada real al backend
-    await component.loadProducts(); // Asegúrate de que loadProducts() hace la llamada HTTP
-
-    // Verifica que los productos se hayan cargado correctamente
-    expect(component.productos).toBeDefined();
-    expect(component.productos.length).toBeGreaterThan(0); // Asegúrate de que haya productos
-  });
-
-  it('debería manejar correctamente el error al cargar productos', async () => {
-    // Aquí no puedes simular un error porque estás llamando al backend real
-    // Necesitarías configurar tu backend para que devuelva un error intencionalmente
-    // o crear una situación donde el backend esté caído
-
-    fixture.detectChanges();
 
     try {
-      await component.loadProducts();
+      const loginResponse = await axios.post('http://localhost:3000/users/login', {
+        email: 'carolinapaulacorazza@gmail.com',
+        password: 'carolina'
+      });
+
+      if (loginResponse.data && loginResponse.data.accessToken) {
+        accessToken = loginResponse.data.accessToken;
+        localStorage.setItem('token', JSON.stringify({ accessToken }));
+        console.log('access token: ', accessToken)
+      } else {
+        throw new Error('No se recibió el accessToken');
+      }
     } catch (error) {
-      // Maneja el error aquí
-      expect(component.productos.length).toBe(0); // Asegúrate de que no se carguen productos
+      console.error('Error durante la autenticación:', error);
+      throw error;
+    }
+  });
+
+  it('Debería obtener la lista de productos a partir de obtenerProductos()', async () => {
+    try {
+      const products: ProductI[] = await service.obtenerProductos();
+
+      if (products && products.length > 0) {
+        expect(products.length).toBeGreaterThan(0);
+        console.log(products);
+      } else {
+        fail('La respuesta no contiene productos');
+      }
+    } catch (error) {
+      console.error('Error al recuperar los productos:', error);
+      throw error;
     }
   });
 });
